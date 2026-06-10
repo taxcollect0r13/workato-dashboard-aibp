@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Attendee Dashboard — Workato · AIBP Malaysia 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;0,700;1,300;1,400;1,700&family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--amber:#B8820E;--amber-dark:#7A5608;--amber-mid:#9A6C0C;--amber-light:#F0E0A8;--amber-pale:#FAF3DC;--black:#1A1310;--black-mid:#231810;--cream:#F2EAD6;--cream-mid:#E8DEC8;--white:#FFFFFF;--text:#2A1E0E;--text-muted:#8A7A62;--border:rgba(42,30,14,0.1);color-scheme:light;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Lato',system-ui,sans-serif;background:var(--black);color:var(--text);min-height:100vh;}
+#splash{position:fixed;inset:0;z-index:9999;background:var(--black);display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.splash-logo{height:44px;margin-bottom:2rem;object-fit:contain;}
+.splash-title{font-family:'Crimson Pro',serif;font-size:30px;font-weight:600;color:var(--white);margin-bottom:.5rem;text-align:center;}
+.splash-sub{font-size:10px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--amber);margin-bottom:2.5rem;text-align:center;}
+.splash-form{display:flex;flex-direction:column;align-items:center;gap:12px;width:100%;max-width:320px;}
+.splash-input{width:100%;padding:12px 16px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:3px;font-family:'Lato',sans-serif;font-size:14px;color:var(--white);outline:none;text-align:center;letter-spacing:.05em;transition:border-color .2s;}
+.splash-input::placeholder{color:rgba(255,255,255,.3);}
+.splash-input:focus{border-color:var(--amber);}
+.splash-btn{width:100%;padding:13px;background:var(--amber);border:none;border-radius:3px;font-family:'Lato',sans-serif;font-size:11px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:var(--white);cursor:pointer;transition:background .2s;}
+.splash-btn:hover{background:var(--amber-mid);}
+.splash-error{font-size:12px;color:#E06060;display:none;}
+#app{display:none;background:var(--cream);min-height:100vh;}
+.topnav{background:var(--white);height:60px;display:flex;align-items:center;justify-content:space-between;padding:0 2.5rem;border-bottom:1px solid rgba(0,0,0,.08);position:sticky;top:0;z-index:100;}
+.nav-left{display:flex;align-items:center;gap:20px;}
+.nav-left img.nav-aibp{height:30px;}
+.nav-divider{width:1px;height:30px;background:rgba(0,0,0,.12);}
+.nav-partner img{height:26px;object-fit:contain;}
+.nav-partner-text{font-size:14px;font-weight:900;letter-spacing:.04em;color:var(--text);display:none;}
+.nav-right{display:flex;align-items:center;gap:20px;}
+.nav-region{font-size:11px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--text-muted);}
+.nav-cta{font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--amber-dark);border:1.5px solid var(--amber);padding:7px 16px;border-radius:2px;cursor:pointer;transition:all .2s;}
+.nav-cta:hover{background:var(--amber);color:var(--white);}
+.hero{background:linear-gradient(145deg,#C49020 0%,#9A6C0C 55%,#7A5208 100%);padding:3rem 2.5rem;display:grid;grid-template-columns:1fr auto;gap:2rem;align-items:start;}
+.hero-left{max-width:640px;}
+.hero-breadcrumb{display:flex;align-items:center;gap:8px;font-size:9px;font-weight:900;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:1.75rem;}
+.hero-breadcrumb .active{color:rgba(255,255,255,.85);}
+.hero-ce-logo{height:60px;display:block;margin-bottom:1.5rem;object-fit:contain;object-position:left;}
+.hero-date{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.65);margin-bottom:1.25rem;}
+.hero-cd-label{font-size:9px;font-weight:900;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:.6rem;}
+.countdown{display:flex;gap:8px;margin-bottom:2rem;}
+.cd-box{display:flex;flex-direction:column;align-items:center;background:rgba(0,0,0,.25);border-radius:3px;padding:10px 14px;min-width:62px;}
+.cd-num{font-size:28px;font-weight:900;color:var(--white);line-height:1;}
+.cd-lbl{font-size:8px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.5);margin-top:4px;}
+.hero-title{font-family:'Crimson Pro',serif;font-size:52px;font-weight:400;font-style:italic;color:var(--white);line-height:1.05;margin-bottom:1rem;}
+.hero-desc{font-size:14px;color:rgba(255,255,255,.65);line-height:1.7;margin-bottom:1.5rem;max-width:520px;}
+.hero-refresh{display:inline-flex;align-items:center;gap:7px;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.8);border:1.5px solid rgba(255,255,255,.35);padding:9px 18px;border-radius:2px;cursor:pointer;background:transparent;transition:all .2s;}
+.hero-refresh:hover{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.6);}
+.hero-stats{display:flex;flex-direction:column;gap:10px;min-width:175px;}
+.hsc{background:rgba(0,0,0,.28);border-radius:4px;padding:1.5rem 1.5rem 1.25rem;}
+.hsc-num{font-size:52px;font-weight:900;color:var(--white);line-height:1;letter-spacing:-.02em;margin-bottom:4px;}
+.hsc-title{font-size:10px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.9);margin-bottom:2px;}
+.hsc-sub{font-size:11px;color:rgba(255,255,255,.45);}
+.about{background:var(--black-mid);padding:3rem 2.5rem;}
+.sec-label{font-size:9px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:var(--amber);margin-bottom:1.25rem;}
+.about-headline{font-family:'Crimson Pro',serif;font-size:26px;font-weight:700;color:var(--white);line-height:1.4;margin-bottom:1rem;max-width:700px;}
+.about-body{font-size:14px;color:rgba(255,255,255,.5);line-height:1.8;margin-bottom:2rem;max-width:700px;}
+.about-cards{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:760px;}
+.about-card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:4px;padding:1.25rem 1.5rem;}
+.about-card h3{font-size:13px;font-weight:700;color:var(--white);margin-bottom:.5rem;}
+.about-card p{font-size:13px;color:rgba(255,255,255,.45);line-height:1.7;}
+.prog-sec{background:var(--cream);padding:2.5rem;border-top:1px solid var(--cream-mid);}
+.prog-cards{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:760px;}
+.prog-card{background:var(--white);border:1px solid var(--border);border-radius:4px;padding:1.5rem 2rem;}
+.prog-card-title{font-size:9px;font-weight:900;letter-spacing:.16em;text-transform:uppercase;color:var(--text-muted);margin-bottom:1.25rem;}
+.prog-nums{display:flex;align-items:baseline;gap:1.5rem;flex-wrap:wrap;}
+.prog-nb{display:flex;flex-direction:column;gap:4px;}
+.prog-n{font-size:38px;font-weight:900;line-height:1;letter-spacing:-.02em;}
+.prog-n.t{color:var(--text);}
+.prog-n.l{color:var(--amber);}
+.prog-nl{font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted);}
+.live-hdr{background:var(--cream);padding:1.25rem 2.5rem;display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--cream-mid);border-bottom:1px solid var(--cream-mid);}
+.live-title{font-family:'Crimson Pro',serif;font-size:20px;font-weight:700;color:var(--text);}
+.live-upd{font-size:11px;color:var(--amber);margin-top:2px;}
+.live-btn{display:inline-flex;align-items:center;gap:6px;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--amber-dark);border:1.5px solid var(--amber);padding:8px 16px;border-radius:2px;cursor:pointer;background:transparent;transition:all .2s;}
+.live-btn:hover{background:var(--amber);color:var(--white);}
+.board-hdr{background:linear-gradient(135deg,#9A6C0C 0%,#7A5208 100%);padding:1.25rem 2.5rem;display:flex;align-items:flex-start;justify-content:space-between;}
+.bh-left{display:flex;flex-direction:column;gap:4px;}
+.bh-num{font-size:9px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.45);}
+.bh-title{font-family:'Crimson Pro',serif;font-size:22px;font-weight:600;color:var(--white);}
+.bh-sub{font-size:12px;color:rgba(255,255,255,.5);margin-top:2px;}
+.bh-right{display:flex;gap:2rem;align-items:flex-start;flex-shrink:0;}
+.bh-stat{text-align:right;}
+.bh-stat-n{font-size:32px;font-weight:900;color:var(--white);line-height:1;letter-spacing:-.02em;}
+.bh-stat-l{font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.45);margin-top:2px;}
+.sheet-link{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.6);text-decoration:none;display:inline-flex;align-items:center;gap:5px;align-self:flex-end;margin-left:1.5rem;}
+.sheet-link:hover{color:var(--white);}
+.filter-bar{display:flex;align-items:center;gap:10px;padding:.75rem 2.5rem;background:var(--cream);border-bottom:1px solid var(--border);flex-wrap:wrap;}
+.fl{font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted);}
+.fi{flex:1;min-width:160px;max-width:260px;border:1px solid var(--border);border-radius:2px;padding:6px 12px;font-family:'Lato',sans-serif;font-size:12px;color:var(--text);background:var(--white);outline:none;}
+.fi:focus{border-color:var(--amber);}
+.fs{border:1px solid var(--border);border-radius:2px;padding:6px 12px;font-family:'Lato',sans-serif;font-size:12px;color:var(--text);background:var(--white);outline:none;cursor:pointer;}
+.fc{font-size:11px;color:var(--text-muted);margin-left:auto;}
+.fck{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text-muted);cursor:pointer;}
+.fck input{accent-color:var(--amber);}
+.tbl-wrap{background:var(--white);overflow:hidden;}
+table{width:100%;border-collapse:collapse;}
+thead th{text-align:left;padding:11px 2.5rem;font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--text-muted);background:var(--cream);border-bottom:1px solid var(--border);white-space:nowrap;}
+tbody td{padding:14px 2.5rem;border-bottom:1px solid rgba(42,30,14,.06);font-size:13px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+tbody tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:var(--amber-pale);}
+tbody tr.pri td{background:#FFFDF3;}
+tbody tr.pri:hover td{background:var(--amber-pale);}
+td strong{font-weight:700;color:var(--black);}
+td.m{color:var(--text-muted);font-size:12px;}
+.ec{text-align:center!important;padding:3rem 2.5rem!important;color:var(--text-muted);font-style:italic;white-space:normal!important;}
+.sector-group td{background:var(--cream-mid)!important;font-size:9px!important;font-weight:900!important;letter-spacing:.16em!important;text-transform:uppercase!important;color:var(--amber-dark)!important;padding:8px 2.5rem!important;border-bottom:1px solid var(--border)!important;}
+.sector-group:hover td{background:var(--cream-mid)!important;}
+.badge{display:inline-block;font-size:9px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;padding:3px 9px;border-radius:2px;}
+.bp{background:var(--amber-pale);color:var(--amber-dark);border:1px solid var(--amber-light);}
+.bo{background:#E6F2FA;color:#1A5880;}
+.bu{background:#E6F5E8;color:#1A5220;}
+.bt{background:#F0EAF8;color:#5A2880;}
+.bb{background:#FEF2E0;color:#805010;}
+.bm{background:#FAEAE8;color:#802015;}
+.np{padding:1.5rem 2.5rem;background:var(--white);border-bottom:1px solid var(--border);}
+.np-hdr{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px;}
+.np-lbl{font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--text-muted);}
+.np-cnt{font-family:'Crimson Pro',serif;font-size:18px;font-weight:600;color:var(--text);}
+.np-track{height:7px;background:var(--cream);border-radius:4px;overflow:hidden;}
+.np-fill{height:100%;background:linear-gradient(90deg,var(--amber) 0%,var(--amber-dark) 100%);border-radius:4px;transition:width 1s ease;min-width:4px;}
+.np-ticks{display:flex;justify-content:space-between;font-size:10px;color:var(--text-muted);margin-top:6px;}
+.footer{background:var(--black);padding:1.75rem 2.5rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;}
+.footer img{height:22px;opacity:.5;}
+.fc-c{font-size:11px;color:rgba(255,255,255,.3);text-align:center;}
+.fc-r{font-size:11px;color:rgba(255,255,255,.25);}
+@media(max-width:700px){.hero{grid-template-columns:1fr;}.hero-stats{flex-direction:row;}.about-cards,.prog-cards{grid-template-columns:1fr;}.board-hdr{flex-direction:column;gap:1rem;}}
+</style>
+</head>
+<body>
+<div id="splash">
+  <img class="splash-logo" src="https://images.squarespace-cdn.com/content/v1/6316ec4bc3127239ee7b0786/34cc06e3-f859-40f8-8c01-f758906ce1c9/AIBP+by+Industry+Platform+%28High+Res%29.png?format=1500w" alt="AIBP" onerror="this.style.display='none'">
+  <div class="splash-title">Attendee Dashboard</div>
+  <div class="splash-sub">AIBP C&amp;E Malaysia 2026</div>
+  <div class="splash-form">
+    <input type="password" class="splash-input" id="pw" placeholder="Enter password" onkeydown="if(event.key==='Enter')login()">
+    <button class="splash-btn" onclick="login()">Enter</button>
+    <div class="splash-error" id="pw-err">Incorrect password. Please try again.</div>
+  </div>
+</div>
+<div id="app">
+  <nav class="topnav">
+    <div class="nav-left">
+      <img class="nav-aibp" src="https://images.squarespace-cdn.com/content/v1/6316ec4bc3127239ee7b0786/34cc06e3-f859-40f8-8c01-f758906ce1c9/AIBP+by+Industry+Platform+%28High+Res%29.png?format=1500w" alt="AIBP" onerror="this.style.display='none'">
+      <div class="nav-divider"></div>
+      <div class="nav-partner">
+        <img src="https://public-workato-files.s3.us-east-2.amazonaws.com/Uploads/workato-logo-1.png" alt="Workato" onerror="this.style.display='none';this.nextElementSibling.style.display='block';">
+        <span class="nav-partner-text">Workato</span>
+      </div>
+    </div>
+    <div class="nav-right">
+      <span class="nav-region">Malaysia 2026</span>
+      <span class="nav-cta" onclick="document.getElementById('live').scrollIntoView({behavior:'smooth'})">Attendee Dashboard</span>
+    </div>
+  </nav>
+  <section class="hero">
+    <div class="hero-left">
+      <div class="hero-breadcrumb">AIBP Conference &amp; Exhibition <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg> Malaysia <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg> <span class="active">Partner</span></div>
+      <img class="hero-ce-logo" src="https://images.squarespace-cdn.com/content/v1/6316ec4bc3127239ee7b0786/c1115e32-fd7e-4e3f-ae7b-4a77d1065efa/C%26E+MY+Logo+White+Ver.png?format=500w" alt="AIBP C&amp;E Malaysia" onerror="this.style.display='none';this.nextElementSibling.style.display='block';">
+      <div style="display:none;font-family:'Crimson Pro',serif;font-size:20px;font-weight:700;color:#fff;margin-bottom:1.5rem;">AIBP C&amp;E Malaysia 2026</div>
+      <div class="hero-date">08 - 09 July 2026 &nbsp;&middot;&nbsp; Kuala Lumpur, Malaysia</div>
+      <div class="hero-cd-label">Conference in</div>
+      <div class="countdown">
+        <div class="cd-box"><div class="cd-num" id="d">--</div><div class="cd-lbl">Days</div></div>
+        <div class="cd-box"><div class="cd-num" id="h">--</div><div class="cd-lbl">Hrs</div></div>
+        <div class="cd-box"><div class="cd-num" id="m">--</div><div class="cd-lbl">Min</div></div>
+        <div class="cd-box"><div class="cd-num" id="s">--</div><div class="cd-lbl">Sec</div></div>
+      </div>
+      <div class="hero-title">Attendee Dashboard</div>
+      <div class="hero-desc">A live partner dashboard showing AIBP's account coverage and private networking session registrations for Workato.</div>
+      <button class="hero-refresh" onclick="loadSheet()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg> Refresh Data</button>
+    </div>
+    <div class="hero-stats">
+      <div class="hsc"><div class="hsc-num">61</div><div class="hsc-title">ICP &amp; BP</div><div class="hsc-sub">Target accounts</div></div>
+      <div class="hsc"><div class="hsc-num" id="h-net">--</div><div class="hsc-title">Networking</div><div class="hsc-sub">Private session attendees</div></div>
+    </div>
+  </section>
+  <section class="about">
+    <div class="sec-label">About This Programme</div>
+    <div class="about-headline">A focused, high-touch programme to accelerate Workato's market presence in Malaysia.</div>
+    <div class="about-body">Driving Workato's engagement with net-new enterprise accounts and building pipeline through targeted outreach that creates direct access to the CIOs and enterprise architects who own the integration and orchestration agenda.</div>
+    <div class="about-cards">
+      <div class="about-card"><h3>Curated ICP &amp; BP</h3><p>61 target accounts across O&amp;G, Utilities, Telco, Banking and Manufacturing curated by AIBP to match Workato's ideal customer profile in the Malaysian enterprise market.</p></div>
+      <div class="about-card"><h3>Private Networking Session</h3><p>Targeted engagement with key enterprise CIOs and architects to surface orchestration pain points, share market insights, and qualify pipeline opportunities for Workato.</p></div>
+    </div>
+  </section>
+  <section class="prog-sec">
+    <div class="sec-label">Networking Malaysia - Targets &amp; Progress</div>
+    <div class="prog-cards">
+      <div class="prog-card">
+        <div class="prog-card-title">Workato Networking Session &middot; 09 July 2026</div>
+        <div class="prog-nums">
+          <div class="prog-nb"><div class="prog-n t">25</div><div class="prog-nl">Target Registrations</div></div>
+          <div class="prog-nb"><div class="prog-n l" id="p-reg">--</div><div class="prog-nl">Registered to Date</div></div>
+        </div>
+      </div>
+      <div class="prog-card">
+        <div class="prog-card-title">ICP &amp; BP Coverage</div>
+        <div class="prog-nums">
+          <div class="prog-nb"><div class="prog-n t">61</div><div class="prog-nl">Target Accounts</div></div>
+          <div class="prog-nb"><div class="prog-n t">16</div><div class="prog-nl">Priority Accounts</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <div class="live-hdr" id="live">
+    <div><div class="live-title">Live Engagement Overview</div><div class="live-upd" id="upd">Loading...</div></div>
+    <button class="live-btn" onclick="loadSheet()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg> Refresh</button>
+  </div>
+  <div>
+    <div class="board-hdr">
+      <div class="bh-left"><div class="bh-num">01 - Account Coverage</div><div class="bh-title">Curated ICP &amp; BP</div><div class="bh-sub">Sorted by vertical then company A-Z - 16 priority highlighted</div></div>
+      <div class="bh-right"><div class="bh-stat"><div class="bh-stat-n">61</div><div class="bh-stat-l">Accounts</div></div><div class="bh-stat"><div class="bh-stat-n">16</div><div class="bh-stat-l">Priority</div></div></div>
+    </div>
+    <div class="tbl-wrap">
+      <div class="filter-bar">
+        <span class="fl">Filter</span>
+        <input type="text" class="fi" id="iq" placeholder="Search company or persona..." oninput="fICP()">
+        <select class="fs" id="is" onchange="fICP()"><option value="">All Verticals</option><option value="bank">Banking</option><option value="mfg">Manufacturing</option><option value="og">Oil &amp; Gas</option><option value="telco">Telco</option><option value="util">Utilities</option></select>
+        <label class="fck"><input type="checkbox" id="ip" onchange="fICP()"> Priority only</label>
+        <span class="fc" id="ic"></span>
+      </div>
+      <table><thead><tr><th style="width:30%">Company</th><th style="width:40%">Key Personas</th><th style="width:30%">Vertical</th></tr></thead><tbody id="ib"></tbody></table>
+    </div>
+  </div>
+  <div>
+    <div class="board-hdr">
+      <div class="bh-left"><div class="bh-num">02 - Private Session</div><div class="bh-title">Workato Networking Session</div><div class="bh-sub">Beyond the AI Pilot - 09 July 2026 - 10:30 AM</div></div>
+      <div class="bh-right">
+        <div class="bh-stat"><div class="bh-stat-n" id="nb">--</div><div class="bh-stat-l">Attendees</div></div>
+        <a class="sheet-link" href="https://docs.google.com/spreadsheets/d/1IDXcNq7_Txgt1tcmGb0YamMGyQCaBeA3CPWQymufzXg/edit" target="_blank"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg> Update Sheet</a>
+      </div>
+    </div>
+    <div class="tbl-wrap">
+      <div class="np">
+        <div class="np-hdr"><span class="np-lbl">Registrations towards target</span><span class="np-cnt" id="npc">-- / 25 pax</span></div>
+        <div class="np-track"><div class="np-fill" id="npf" style="width:0%"></div></div>
+        <div class="np-ticks"><span>0</span><span>Target: 25 pax</span></div>
+      </div>
+      <table><thead><tr><th style="width:30%">Company</th><th style="width:30%">Job Title</th><th style="width:25%">Sector</th><th style="width:15%">Date Added</th></tr></thead><tbody id="ntb"><tr><td class="ec" colspan="4">Loading...</td></tr></tbody></table>
+    </div>
+  </div>
+  <footer class="footer">
+    <img src="https://images.squarespace-cdn.com/content/v1/6316ec4bc3127239ee7b0786/34cc06e3-f859-40f8-8c01-f758906ce1c9/AIBP+by+Industry+Platform+%28High+Res%29.png?format=1500w" alt="AIBP" onerror="this.style.display='none'">
+    <div class="fc-c">AIBP C&amp;E Malaysia 2026 - Attendee Dashboard - Confidential</div>
+    <div class="fc-r" id="fts"></div>
+  </footer>
+</div>
+<script>
+const PW='Workato2026';
+function login(){if(document.getElementById('pw').value===PW){document.getElementById('splash').style.display='none';document.getElementById('app').style.display='block';startCD();renderICP();loadSheet();}else{document.getElementById('pw-err').style.display='block';document.getElementById('pw').value='';document.getElementById('pw').focus();}}
+function startCD(){const t=new Date('2026-07-08T09:00:00+08:00').getTime();(function tick(){const diff=t-Date.now();if(diff<=0){['d','h','m','s'].forEach(id=>document.getElementById(id).textContent='0');return;}document.getElementById('d').textContent=String(Math.floor(diff/86400000)).padStart(2,'0');document.getElementById('h').textContent=String(Math.floor(diff%86400000/3600000)).padStart(2,'0');document.getElementById('m').textContent=String(Math.floor(diff%3600000/60000)).padStart(2,'0');document.getElementById('s').textContent=String(Math.floor(diff%60000/1000)).padStart(2,'0');setTimeout(tick,1000);})();}
+const PRI=new Set(['CelcomDigi','Axiata Group','Sarawak Energy','Sapura Energy','Dialog Group','Yinson Holdings','Top Glove','Proton Holdings','Perodua','IOI Group','Kossan Rubber','Supermax','Press Metal','Lotte Chemical Titan','UMW Holdings','Genting Group']);
+const SL={og:'Oil & Gas',util:'Utilities',telco:'Telco',bank:'Banking',mfg:'Manufacturing'};
+const SB={og:'<span class="badge bo">Oil &amp; Gas</span>',util:'<span class="badge bu">Utilities</span>',telco:'<span class="badge bt">Telco</span>',bank:'<span class="badge bb">Banking</span>',mfg:'<span class="badge bm">Manufacturing</span>'};
+const ICP=[{n:'Affin Bank',p:'VP IT, Head of IT, Director IT, Head of Applications',sc:'bank'},{n:'Alliance Bank',p:'VP IT, Head of IT, Director IT, Head of Applications',sc:'bank'},{n:'AmBank Group',p:'CIO, VP IT, Head of IT, Director IT, Dir. Digital Transformation',sc:'bank'},{n:'Bank Islam',p:'CIO, VP IT, Head of Applications, Director IT',sc:'bank'},{n:'Bank Muamalat',p:'Head of IT, VP IT, Director IT',sc:'bank'},{n:'Bank Rakyat',p:'CIO, VP IT, Head of IT, Head of Applications, Director IT',sc:'bank'},{n:'EPF (KWSP)',p:'CIO, VP IT, Head of IT, Director IT, Dir. Digital Transformation',sc:'bank'},{n:'Hong Leong Bank',p:'CIO, VP Technology, Head of Enterprise Architecture, Director IT',sc:'bank'},{n:'Hong Leong Financial Group',p:'CIO, VP IT, Head of Enterprise Architecture, Director IT',sc:'bank'},{n:'Kenanga Investment Bank',p:'Head of IT, VP IT, Director IT',sc:'bank'},{n:'Maybank',p:'CIO, CDO, VP IT, Head of Enterprise Architecture, Dir. Digital Transformation',sc:'bank'},{n:'MBSB Bank',p:'Head of IT, VP IT, Director IT, Head of Applications',sc:'bank'},{n:'Public Bank',p:'CIO, VP IT, Head of IT, Director IT, Director Enterprise Systems',sc:'bank'},{n:'RHB Bank',p:'CIO, VP IT, Head of Enterprise Architecture, Director IT',sc:'bank'},{n:'SOCSO',p:'Head of IT, Director IT, Head of Applications',sc:'bank'},{n:'Bermaz Auto',p:'Head of IT, VP IT, Director IT',sc:'mfg'},{n:'Berjaya Corporation',p:'VP IT, Head of IT, Director IT, Director Enterprise Systems',sc:'mfg'},{n:'Boustead Holdings',p:'VP IT, Head of IT, Director IT, Head of Applications',sc:'mfg'},{n:'FELCRA',p:'Head of IT, VP IT, Director IT',sc:'mfg'},{n:'FGV Holdings',p:'CIO, VP IT, Head of IT, Director IT, Director Enterprise Systems',sc:'mfg'},{n:'Fraser & Neave',p:'VP IT, Head of IT, Director IT, Head of Applications',sc:'mfg'},{n:'Genting Group',p:'CIO, VP IT, Head of Enterprise Architecture, Director IT',sc:'mfg'},{n:'IOI Group',p:'CIO, VP IT, Head of IT, Director IT, Director Enterprise Systems',sc:'mfg'},{n:'KL Kepong (KLK)',p:'VP IT, Head of IT, Director IT, Director Enterprise Systems',sc:'mfg'},{n:'Kossan Rubber',p:'VP IT, Head of IT, Head of Applications, Director IT',sc:'mfg'},{n:'Lotte Chemical Titan',p:'Head of IT, VP IT, Director IT, Director Enterprise Systems',sc:'mfg'},{n:'Perodua',p:'VP IT, Head of IT, Head of Applications, Director IT',sc:'mfg'},{n:'PPB Group',p:'VP IT, Head of IT, Director IT, Director Enterprise Systems',sc:'mfg'},{n:'Press Metal',p:'CIO, VP IT, Head of IT, Director IT, Director Enterprise Systems',sc:'mfg'},{n:'Priceworth Group',p:'Head of IT, Director IT',sc:'mfg'},{n:'Proton Holdings',p:'CIO, VP IT, Head of Enterprise Architecture, Director IT',sc:'mfg'},{n:'QL Resources',p:'VP IT, Head of IT, Director IT, Head of Applications',sc:'mfg'},{n:'Sarawak Consolidated',p:'Head of IT, VP IT, Director IT',sc:'mfg'},{n:'Supermax',p:'Head of IT, VP IT, Director IT, Head of Applications',sc:'mfg'},{n:'Top Glove',p:'CIO, VP IT, Head of IT, Head of Applications, Director IT',sc:'mfg'},{n:'UMW Holdings',p:'CIO, VP IT, Head of IT, Director IT, Director Enterprise Systems',sc:'mfg'},{n:'Westports',p:'Head of IT, VP IT, Director IT, Head of Applications',sc:'mfg'},{n:'Bumi Armada',p:'Head of IT, VP IT, Head of Infrastructure, Director IT',sc:'og'},{n:'Dayang Enterprise',p:'Head of IT, VP IT, Director IT',sc:'og'},{n:'Dialog Group',p:'CIO, VP IT, Head of Enterprise Architecture, Director IT',sc:'og'},{n:'Hibiscus Petroleum',p:'Head of IT, VP IT, Director IT',sc:'og'},{n:'PETROS',p:'CIO, VP IT, Head of IT, Director IT',sc:'og'},{n:'Sapura Energy',p:'CIO, Head of IT, Head of Infrastructure, Director IT',sc:'og'},{n:'TH Heavy Engineering',p:'Head of IT, VP IT, Director IT',sc:'og'},{n:'Uzma Berhad',p:'Head of IT, Director IT',sc:'og'},{n:'Velesto Energy',p:'Head of IT, VP IT, Director IT',sc:'og'},{n:'Wah Seong',p:'Head of IT, VP IT, Director IT',sc:'og'},{n:'Yinson Holdings',p:'CIO, VP IT, Head of Enterprise Architecture, Dir. Digital Transformation',sc:'og'},{n:'Axiata Group',p:'CIO, VP IT, Head of Enterprise Architecture, Dir. Digital Transformation',sc:'telco'},{n:'CelcomDigi',p:'CIO, CDO, VP IT, Head of Enterprise Architecture, Dir. Digital Transformation',sc:'telco'},{n:'TIME dotCom',p:'CIO, VP Technology, Head of IT, Director Enterprise Systems',sc:'telco'},{n:'U Mobile',p:'CIO, VP Technology, Head of IT, Director IT',sc:'telco'},{n:'YTL Communications',p:'Head of IT, VP Technology, Director IT',sc:'telco'},{n:'Air Selangor',p:'CIO, VP IT, Head of IT, Director IT, Dir. Digital Transformation',sc:'util'},{n:'Indah Water',p:'Head of IT, Director IT, Head of Infrastructure',sc:'util'},{n:'Malakoff Corporation',p:'Head of IT, VP IT, Director IT, Head of Infrastructure',sc:'util'},{n:'Ranhill Utilities',p:'Head of IT, VP IT, Director IT, Head of Infrastructure',sc:'util'},{n:'Sabah Electricity (SESB)',p:'Head of IT, Head of Infrastructure, Director IT, VP IT',sc:'util'},{n:'Sarawak Energy',p:'CIO, VP IT, Head of IT, Director IT, Director Enterprise Systems',sc:'util'},{n:'TNB Fuel Services',p:'Head of IT, VP IT, Director IT',sc:'util'},{n:'YTL Power',p:'CIO, VP Technology, Head of Enterprise Architecture, Director IT',sc:'util'}];
+let filteredICP=[...ICP];
+function fICP(){const q=document.getElementById('iq').value.toLowerCase();const sec=document.getElementById('is').value;const pri=document.getElementById('ip').checked;filteredICP=ICP.filter(r=>(!q||r.n.toLowerCase().includes(q)||r.p.toLowerCase().includes(q))&&(!sec||r.sc===sec)&&(!pri||PRI.has(r.n)));renderICP();}
+function renderICP(){const tb=document.getElementById('ib');document.getElementById('ic').textContent=filteredICP.length+' shown';if(!filteredICP.length){tb.innerHTML='<tr><td class="ec" colspan="3">No accounts match the filter.</td></tr>';return;}const so=['bank','mfg','og','telco','util'];let html='';for(const sc of so){const rows=filteredICP.filter(r=>r.sc===sc);if(!rows.length)continue;html+=`<tr class="sector-group"><td colspan="3">${SL[sc]}</td></tr>`;html+=rows.map(r=>{const p=PRI.has(r.n);return`<tr class="${p?'pri':''}"><td><strong>${r.n}</strong>${p?' <span class="badge bp">Priority</span>':''}</td><td class="m">${r.p}</td><td>${SB[r.sc]}</td></tr>`;}).join('');}tb.innerHTML=html;}
+const SHEET_ID='1IDXcNq7_Txgt1tcmGb0YamMGyQCaBeA3CPWQymufzXg';
+const CSV_URL=`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv`;
+const TARGET=25;
+function parseCSV(text){const lines=text.trim().split('\n');const rows=[];for(let i=1;i<lines.length;i++){const cols=[];let cur='',inQ=false;for(const ch of lines[i]){if(ch==='"'){inQ=!inQ;}else if(ch===','&&!inQ){cols.push(cur.trim());cur='';}else cur+=ch;}cols.push(cur.trim());if(cols[0]||cols[1])rows.push({company:cols[0]||'',title:cols[1]||'',sector:cols[2]||'',dateAdded:cols[3]||''});}return rows;}
+function secBadge(s){if(!s)return '--';const l=s.toLowerCase();if(l.includes('oil')||l.includes('gas'))return SB.og;if(l.includes('util')||l.includes('power')||l.includes('water')||l.includes('electric'))return SB.util;if(l.includes('telco')||l.includes('mobile'))return SB.telco;if(l.includes('bank')||l.includes('financ'))return SB.bank;return SB.mfg;}
+async function loadSheet(){const now=new Date().toLocaleString('en-GB',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});document.getElementById('upd').textContent='Data last updated: '+now;document.getElementById('fts').textContent='Last refreshed: '+now;try{const res=await fetch(CSV_URL);const text=await res.text();const rows=parseCSV(text);const cnt=rows.length;const pct=Math.min(Math.round(cnt/TARGET*100),100);document.getElementById('h-net').textContent=cnt;document.getElementById('p-reg').textContent=cnt;document.getElementById('nb').textContent=cnt;document.getElementById('npc').textContent=cnt+' / '+TARGET+' pax';document.getElementById('npf').style.width=(pct||0)+'%';const ntb=document.getElementById('ntb');if(!rows.length){ntb.innerHTML=`<tr><td class="ec" colspan="4">No registrations yet.</td></tr>`;}else{ntb.innerHTML=rows.map(r=>`<tr><td><strong>${r.company||'--'}</strong></td><td class="m">${r.title||'--'}</td><td>${secBadge(r.sector)}</td><td class="m">${r.dateAdded||'--'}</td></tr>`).join('');}}catch(e){document.getElementById('ntb').innerHTML='<tr><td class="ec" colspan="4">Could not load data. Ensure the Google Sheet is public.</td></tr>';['h-net','p-reg','nb'].forEach(id=>document.getElementById(id).textContent='--');}}
+</script>
+</body>
+</html>
